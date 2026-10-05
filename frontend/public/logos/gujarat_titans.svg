@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <!-- Lightning Triangle Shield -->
+  <path d="M50 8 L90 85 L10 85 Z" fill="#0f172a" stroke="#eab308" stroke-width="3"/>
+  <path d="M50 16 L82 80 L18 80 Z" fill="#1e3a8a"/>
+  <!-- Gold Lightning Bolt -->
+  <path d="M52 25 L40 50 L52 50 L46 72 L62 45 L50 45 Z" fill="#eab308"/>
+  <text x="50" y="94" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="11" fill="#0f172a" letter-spacing="1">TITANS</text>
+</svg>

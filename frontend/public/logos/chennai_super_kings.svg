@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <circle cx="50" cy="50" r="48" fill="#1e3a8a" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="50" cy="50" r="44" fill="#facc15"/>
+  <!-- Roaring Lion Silhouette -->
+  <path d="M30 68 C28 55, 32 45, 42 38 C44 32, 48 26, 56 24 C54 28, 56 30, 60 28 C66 25, 74 30, 78 38 C82 46, 80 56, 72 64 C66 70, 56 72, 46 72 C38 72, 32 70, 30 68 Z" fill="#b45309"/>
+  <!-- Crown Accent -->
+  <path d="M42 22 L47 28 L52 20 L57 28 L62 22 L60 30 L44 30 Z" fill="#1e3a8a"/>
+  <circle cx="52" cy="18" r="2" fill="#ef4444"/>
+  <!-- Lion Eye and Mane details -->
+  <circle cx="64" cy="40" r="2" fill="#ffffff"/>
+  <path d="M44 48 C48 44, 56 44, 60 48" stroke="#1e3a8a" stroke-width="2" fill="none"/>
+  <!-- Text CS K -->
+  <text x="50" y="85" text-anchor="middle" font-family="sans-serif" font-weight="900" font-size="12" fill="#ffffff" letter-spacing="1">CSK</text>
+</svg>

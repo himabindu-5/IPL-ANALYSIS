@@ -1,0 +1,167 @@
+season,team,matches,wins,losses,no_result_or_tie,runs_for,runs_against
+2007/08,Chennai Super Kings,16,9,7,0,2520,2568
+2007/08,Deccan Chargers,14,2,12,0,2229,2307
+2007/08,Delhi Daredevils,14,7,7,0,2118,2223
+2007/08,Kings XI Punjab,15,10,5,0,2464,2417
+2007/08,Kolkata Knight Riders,13,6,7,0,1942,1718
+2007/08,Mumbai Indians,14,7,7,0,2080,2096
+2007/08,Rajasthan Royals,16,13,3,0,2601,2403
+2007/08,Royal Challengers Bangalore,14,4,10,0,1983,2205
+2009,Chennai Super Kings,14,8,6,0,2231,2004
+2009,Deccan Chargers,16,9,7,0,2408,2387
+2009,Delhi Daredevils,15,10,5,0,2131,2158
+2009,Kings XI Punjab,14,7,7,0,1928,1886
+2009,Kolkata Knight Riders,13,3,9,1,1757,1957
+2009,Mumbai Indians,13,5,8,0,1897,1802
+2009,Rajasthan Royals,13,5,7,1,1688,1810
+2009,Royal Challengers Bangalore,16,9,7,0,2280,2316
+2009/10,Chennai Super Kings,16,9,6,1,2595,2507
+2009/10,Deccan Chargers,16,8,8,0,2374,2482
+2009/10,Delhi Daredevils,14,7,7,0,2155,2166
+2009/10,Kings XI Punjab,14,3,10,1,2278,2365
+2009/10,Kolkata Knight Riders,14,7,7,0,2144,2192
+2009/10,Mumbai Indians,16,11,5,0,2738,2417
+2009/10,Rajasthan Royals,14,6,8,0,2179,2224
+2009/10,Royal Challengers Bangalore,16,8,8,0,2401,2511
+2011,Chennai Super Kings,16,11,5,0,2560,2300
+2011,Deccan Chargers,14,6,8,0,2140,2037
+2011,Delhi Daredevils,14,4,9,1,2087,2076
+2011,Kings XI Punjab,14,7,7,0,2224,2173
+2011,Kochi Tuskers Kerala,14,6,8,0,1901,1986
+2011,Kolkata Knight Riders,15,8,7,0,2023,2072
+2011,Mumbai Indians,16,10,6,0,2288,2283
+2011,Pune Warriors,14,4,9,1,1775,1914
+2011,Rajasthan Royals,13,6,7,0,1687,1801
+2011,Royal Challengers Bangalore,16,10,6,0,2469,2512
+2012,Chennai Super Kings,18,10,8,0,2831,2621
+2012,Deccan Chargers,15,4,11,0,2312,2405
+2012,Delhi Daredevils,18,11,7,0,2645,2745
+2012,Kings XI Punjab,16,8,8,0,2390,2455
+2012,Kolkata Knight Riders,17,12,5,0,2504,2366
+2012,Mumbai Indians,17,10,7,0,2462,2530
+2012,Pune Warriors,16,4,12,0,2321,2424
+2012,Rajasthan Royals,16,7,9,0,2516,2402
+2012,Royal Challengers Bangalore,15,8,7,0,2472,2505
+2013,Chennai Super Kings,18,12,6,0,2778,2602
+2013,Delhi Daredevils,16,3,12,1,2234,2436
+2013,Kings XI Punjab,16,8,8,0,2428,2417
+2013,Kolkata Knight Riders,16,6,10,0,2290,2316
+2013,Mumbai Indians,19,13,6,0,2975,2832
+2013,Pune Warriors,16,4,12,0,2262,2519
+2013,Rajasthan Royals,18,11,7,0,2705,2627
+2013,Royal Challengers Bangalore,16,8,6,2,2571,2451
+2013,Sunrisers Hyderabad,17,9,7,1,2298,2341
+2014,Chennai Super Kings,16,10,6,0,2650,2577
+2014,Delhi Daredevils,14,2,12,0,2081,2184
+2014,Kings XI Punjab,17,12,5,0,2987,2794
+2014,Kolkata Knight Riders,16,11,4,1,2488,2444
+2014,Mumbai Indians,15,7,8,0,2353,2346
+2014,Rajasthan Royals,14,6,7,1,2155,2164
+2014,Royal Challengers Bangalore,14,5,9,0,2093,2163
+2014,Sunrisers Hyderabad,14,6,8,0,2102,2237
+2015,Chennai Super Kings,17,10,7,0,2725,2601
+2015,Delhi Daredevils,14,5,8,1,2168,1978
+2015,Kings XI Punjab,14,2,11,1,2003,2286
+2015,Kolkata Knight Riders,13,7,6,0,2044,2081
+2015,Mumbai Indians,16,10,6,0,2734,2694
+2015,Rajasthan Royals,14,7,5,2,2137,2382
+2015,Royal Challengers Bangalore,16,8,6,2,2311,2184
+2015,Sunrisers Hyderabad,14,7,7,0,2210,2126
+2016,Delhi Daredevils,14,7,7,0,2104,2107
+2016,Gujarat Lions,16,9,7,0,2450,2607
+2016,Kings XI Punjab,14,4,10,0,2134,2233
+2016,Kolkata Knight Riders,15,8,7,0,2263,2321
+2016,Mumbai Indians,14,7,7,0,2194,2190
+2016,Rising Pune Supergiants,14,5,9,0,2063,2113
+2016,Royal Challengers Bangalore,16,9,7,0,2981,2711
+2016,Sunrisers Hyderabad,17,11,6,0,2673,2580
+2017,Delhi Daredevils,14,6,8,0,2219,2255
+2017,Gujarat Lions,14,4,9,1,2406,2472
+2017,Kings XI Punjab,14,7,7,0,2207,2229
+2017,Kolkata Knight Riders,16,9,7,0,2484,2539
+2017,Mumbai Indians,17,11,5,1,2789,2639
+2017,Rising Pune Supergiant,16,10,6,0,2470,2436
+2017,Royal Challengers Bangalore,13,3,10,0,1845,2033
+2017,Sunrisers Hyderabad,14,8,6,0,2349,2166
+2018,Chennai Super Kings,16,11,5,0,2809,2750
+2018,Delhi Daredevils,14,5,9,0,2343,2387
+2018,Kings XI Punjab,14,6,8,0,2210,2326
+2018,Kolkata Knight Riders,16,9,7,0,2759,2743
+2018,Mumbai Indians,14,6,8,0,2380,2282
+2018,Rajasthan Royals,15,7,8,0,2357,2356
+2018,Royal Challengers Bangalore,14,6,8,0,2322,2383
+2018,Sunrisers Hyderabad,17,10,7,0,2721,2674
+2019,Chennai Super Kings,17,10,7,0,2473,2440
+2019,Delhi Capitals,16,9,6,1,2519,2551
+2019,Kings XI Punjab,14,6,8,0,2429,2503
+2019,Kolkata Knight Riders,14,6,7,1,2466,2419
+2019,Mumbai Indians,16,10,5,1,2661,2561
+2019,Rajasthan Royals,14,5,8,1,2194,2254
+2019,Royal Challengers Bangalore,14,5,8,1,2208,2307
+2019,Sunrisers Hyderabad,15,6,8,1,2450,2365
+2020/21,Chennai Super Kings,14,6,8,0,2191,2275
+2020/21,Delhi Capitals,17,8,8,1,2777,2800
+2020/21,Kings XI Punjab,14,5,7,2,2335,2343
+2020/21,Kolkata Knight Riders,14,6,7,1,2219,2206
+2020/21,Mumbai Indians,16,11,3,2,2735,2486
+2020/21,Rajasthan Royals,14,6,8,0,2288,2482
+2020/21,Royal Challengers Bangalore,15,6,8,1,2278,2315
+2020/21,Sunrisers Hyderabad,16,8,7,1,2529,2445
+2021,Chennai Super Kings,16,11,5,0,2733,2555
+2021,Delhi Capitals,16,9,6,1,2487,2445
+2021,Kolkata Knight Riders,17,9,8,0,2559,2545
+2021,Mumbai Indians,14,7,7,0,2117,2128
+2021,Punjab Kings,14,6,8,0,2150,2117
+2021,Rajasthan Royals,14,5,9,0,2196,2318
+2021,Royal Challengers Bangalore,15,9,6,0,2303,2298
+2021,Sunrisers Hyderabad,14,3,10,1,2077,2216
+2022,Chennai Super Kings,14,4,10,0,2288,2254
+2022,Delhi Capitals,14,7,7,0,2341,2397
+2022,Gujarat Titans,16,12,4,0,2663,2534
+2022,Kolkata Knight Riders,14,6,8,0,2223,2249
+2022,Lucknow Super Giants,15,9,6,0,2548,2496
+2022,Mumbai Indians,14,4,10,0,2217,2351
+2022,Punjab Kings,14,7,7,0,2343,2252
+2022,Rajasthan Royals,17,10,7,0,2943,2832
+2022,Royal Challengers Bangalore,16,9,7,0,2632,2614
+2022,Sunrisers Hyderabad,14,6,8,0,2197,2416
+2023,Chennai Super Kings,16,10,5,1,2712,2728
+2023,Delhi Capitals,14,5,9,0,2182,2424
+2023,Gujarat Titans,17,11,6,0,3054,2840
+2023,Kolkata Knight Riders,14,6,8,0,2463,2470
+2023,Lucknow Super Giants,15,8,6,1,2479,2398
+2023,Mumbai Indians,16,9,7,0,2945,2954
+2023,Punjab Kings,14,6,8,0,2556,2564
+2023,Rajasthan Royals,14,7,7,0,2419,2389
+2023,Royal Challengers Bangalore,14,7,7,0,2502,2435
+2023,Sunrisers Hyderabad,14,4,10,0,2376,2486
+2024,Chennai Super Kings,14,7,7,0,2524,2415
+2024,Delhi Capitals,14,7,7,0,2573,2762
+2024,Gujarat Titans,12,5,7,0,2040,2101
+2024,Kolkata Knight Riders,14,11,3,0,2667,2407
+2024,Lucknow Super Giants,14,7,7,0,2483,2521
+2024,Mumbai Indians,14,4,10,0,2568,2660
+2024,Punjab Kings,14,5,9,0,2487,2612
+2024,Rajasthan Royals,15,9,6,0,2647,2657
+2024,Royal Challengers Bengaluru,15,7,8,0,2930,2820
+2024,Sunrisers Hyderabad,16,9,7,0,3052,3016
+2025,Chennai Super Kings,14,4,10,0,2441,2461
+2025,Delhi Capitals,15,6,6,3,2487,2531
+2025,Gujarat Titans,15,9,6,0,2892,2876
+2025,Kolkata Knight Riders,13,5,7,1,2002,2276
+2025,Lucknow Super Giants,14,6,8,0,2732,2779
+2025,Mumbai Indians,16,9,7,0,2912,2716
+2025,Punjab Kings,18,10,6,2,3262,2901
+2025,Rajasthan Royals,14,4,9,1,2603,2773
+2025,Royal Challengers Bengaluru,15,11,4,0,2653,2606
+2025,Sunrisers Hyderabad,14,6,7,1,2519,2584
+2026,Chennai Super Kings,14,6,8,0,2530,2512
+2026,Delhi Capitals,14,7,7,0,2559,2581
+2026,Gujarat Titans,17,10,7,0,3094,3063
+2026,Kolkata Knight Riders,14,5,7,2,2309,2384
+2026,Lucknow Super Giants,14,4,9,1,2511,2616
+2026,Mumbai Indians,14,4,10,0,2553,2636
+2026,Punjab Kings,14,7,6,1,2711,2743
+2026,Rajasthan Royals,16,9,7,0,3076,3064
+2026,Royal Challengers Bengaluru,16,11,5,0,3057,2933
+2026,Sunrisers Hyderabad,15,9,6,0,3050,2918

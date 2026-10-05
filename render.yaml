@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: ipl-analytics-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PGDATABASE
+        fromDatabase:
+          name: ipl-analytics-db
+          property: database
+      - key: PGHOST
+        fromDatabase:
+          name: ipl-analytics-db
+          property: host
+      - key: PGUSER
+        fromDatabase:
+          name: ipl-analytics-db
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: ipl-analytics-db
+          property: password
+      - key: PGPORT
+        fromDatabase:
+          name: ipl-analytics-db
+          property: port
+
+databases:
+  - name: ipl-analytics-db
+    databaseName: ipl_analysis
+    user: postgres
