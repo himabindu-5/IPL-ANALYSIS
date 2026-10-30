@@ -11,3 +11,4 @@ active_url.txt
 public_url.txt
 functions/node_modules/
 functions/database/
+firebase-debug.log
