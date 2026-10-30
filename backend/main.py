@@ -835,11 +835,19 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 DIST_DIR = ROOT / "frontend" / "dist"
+LOGOS_DIR = ROOT / "frontend" / "public" / "logos"
+
+if LOGOS_DIR.exists():
+    app.mount("/logos", StaticFiles(directory=str(LOGOS_DIR)), name="logos")
+
 if DIST_DIR.exists():
-    app.mount("/assets", StaticFiles(directory=str(DIST_DIR / "assets")), name="assets")
+    if (DIST_DIR / "assets").exists():
+        app.mount("/assets", StaticFiles(directory=str(DIST_DIR / "assets")), name="assets")
 
     @app.get("/{full_path:path}")
     def serve_spa(full_path: str):
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API route not found")
         file_path = DIST_DIR / full_path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)

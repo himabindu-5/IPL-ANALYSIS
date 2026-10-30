@@ -1,0 +1,1 @@
+{"status":"online","database_mode":"postgresql","database_message":"Connected to PostgreSQL database 'ipl_analysis'.","row_counts":{"players":809,"player_match_aliases":27909,"matches":1243,"deliveries":295732,"batting_stats":2987,"bowling_stats":2200,"team_season_stats":166}}
