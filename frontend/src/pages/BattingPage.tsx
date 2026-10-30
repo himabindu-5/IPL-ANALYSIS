@@ -95,34 +95,57 @@ export const BattingPage: React.FC = () => {
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="Search batter name..."
+              placeholder="Search 'Virat', 'Rohit', 'Dhoni'..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FB542B]"
             />
           </div>
 
           <select
             value={selectedSeason}
             onChange={(e) => { setSelectedSeason(e.target.value); setPage(1); }}
-            className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+            className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-hidden cursor-pointer"
           >
-            <option value="All">All Seasons</option>
+            <option value="All" className="dark:bg-[#121624]">All Seasons</option>
             {seasons.map((s) => (
-              <option key={s.season} value={s.season}>{s.season}</option>
+              <option key={s.season} value={s.season} className="dark:bg-[#121624]">{s.season}</option>
             ))}
           </select>
+
+          <button
+            type="submit"
+            className="brave-btn-primary px-4 py-1.5 text-xs font-bold"
+          >
+            Search
+          </button>
 
           {(search || selectedSeason !== 'All') && (
             <button
               type="button"
               onClick={resetFilters}
-              className="text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-colors"
+              className="text-xs font-semibold text-[#FB542B] bg-[#FB542B]/10 hover:bg-[#FB542B]/20 px-3 py-1.5 rounded-xl border border-[#FB542B]/30 transition-colors"
             >
               Reset
             </button>
           )}
         </form>
+      </div>
+
+      {/* Quick Batter Chips */}
+      <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1">
+        <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          Batters:
+        </span>
+        {['Virat Kohli', 'Rohit Sharma', 'MS Dhoni', 'KL Rahul', 'Suryakumar Yadav', 'Andre Russell'].map((name) => (
+          <button
+            key={name}
+            onClick={() => { setSearch(name); setPage(1); }}
+            className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#FB542B]/10 hover:text-[#FB542B] border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-all"
+          >
+            {name}
+          </button>
+        ))}
       </div>
 
       {error ? (

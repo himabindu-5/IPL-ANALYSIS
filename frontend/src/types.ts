@@ -14,10 +14,19 @@ export interface DashboardSummary {
   total_wins: number;
 }
 
+export interface PieChartItem {
+  name: string;
+  value: number;
+  color?: string;
+}
+
 export interface DashboardCharts {
   season_matches: Array<{ season: string; matches: number; dec_matches: number }>;
   team_wins: Array<{ team: string; wins: number }>;
   season_trends: Array<{ season: string; total_runs: number; extra_runs: number; total_deliveries: number }>;
+  toss_decision_pie?: PieChartItem[];
+  match_outcome_pie?: PieChartItem[];
+  boundary_share_pie?: PieChartItem[];
 }
 
 export interface DashboardResponse {
@@ -136,8 +145,21 @@ export interface BowlingSeasonStat {
   bowling_strike_rate: number | null;
 }
 
+export interface PlayerPhaseAnalysis {
+  powerplay_runs: number;
+  powerplay_balls: number;
+  powerplay_sr: number;
+  death_runs: number;
+  death_balls: number;
+  death_sr: number;
+  death_wickets: number;
+  death_economy: number;
+}
+
 export interface PlayerProfile {
   player: Player;
+  forte?: string;
+  phase_analysis?: PlayerPhaseAnalysis;
   career_batting: {
     matches: number;
     innings: number;
@@ -252,4 +274,80 @@ export interface QualityReportResponse {
   warning_checks: number;
   checks: ValidationCheck[];
   known_data_quality_issues: Array<Record<string, string>>;
+}
+
+export interface FranchiseMeta {
+  id: string;
+  name: string;
+  short_name: string;
+  captain: string;
+  primary_color: string;
+  secondary_color: string;
+  total_budget_cr: number;
+  home_venue: string;
+}
+
+export interface SquadPlayer {
+  player: string;
+  role: string;
+  is_overseas: boolean;
+  price_cr: number;
+  career_runs: number;
+  career_wickets: number;
+  strike_rate: number;
+  economy: number;
+  fours: number;
+  sixes: number;
+  player_of_match_awards: number;
+  pp_sr: number;
+  death_sr: number;
+  death_econ: number;
+  forte: string;
+  impact_score: number;
+  fair_value_cr: number;
+  vfm_index: number;
+  roi_status: string;
+  roi_color: string;
+  radar_skills: Array<{ subject: string; score: number }>;
+}
+
+export interface TradeRecommendation {
+  target: string;
+  team: string;
+  role: string;
+  price_cr: number;
+  impact_gain: string;
+  trade_feasibility: string;
+  swap_offer: string;
+}
+
+export interface AuctionTeamProfileResponse {
+  team_info: {
+    name: string;
+    short_name: string;
+    id: string;
+    captain: string;
+    home_venue: string;
+    primary_color: string;
+    secondary_color: string;
+    total_budget_cr: number;
+    total_spent_cr: number;
+    remaining_purse_cr: number;
+    squad_size: number;
+    overseas_count: number;
+    max_overseas: number;
+  };
+  squad: SquadPlayer[];
+  spend_by_role: Array<{ role: string; spent_cr: number }>;
+  optimal_playing_xi: SquadPlayer[];
+  impact_player_sub: SquadPlayer | null;
+  team_deficits: string[];
+  recommended_trades: TradeRecommendation[];
+  valuation_formula: {
+    formula_name: string;
+    impact_equation: string;
+    fair_value_equation: string;
+    vfm_equation: string;
+    thresholds: Array<{ status: string; range: string; color: string }>;
+  };
 }

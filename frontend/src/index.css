@@ -2,24 +2,78 @@
 
 @layer base {
   :root {
-    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --bg-page: #f8fafc;
+    --text-primary: #0f172a;
+    --card-bg: #ffffff;
+    --card-border: rgba(226, 232, 240, 0.8);
+    --accent-brave: #FB542B;
+    --accent-indigo: #434FCF;
   }
-  
+
+  .dark {
+    --bg-page: #0d111a;
+    --text-primary: #f1f5f9;
+    --card-bg: #151926;
+    --card-border: rgba(255, 255, 255, 0.08);
+  }
+
+  .theme-brave {
+    --bg-page: #080A10;
+    --text-primary: #ffffff;
+    --card-bg: #0F1322;
+    --card-border: rgba(251, 84, 43, 0.2);
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-indigo-600 selection:text-white;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    @apply antialiased selection:bg-[#FB542B] selection:text-white transition-colors duration-200;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Table numbers & statistics alignment */
   table, td, th, .stat-value {
     font-variant-numeric: tabular-nums;
   }
 }
 
-/* Ensure clean flat borders and clean cards across app */
+/* Clean Card standard */
 .clean-card {
-  @apply bg-white border border-slate-200/80 rounded-2xl shadow-xs hover:border-slate-300 transition-all;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  @apply rounded-2xl shadow-xs transition-all duration-200;
+}
+
+.theme-brave .clean-card {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(67, 79, 207, 0.15);
+}
+
+.theme-brave .clean-card:hover {
+  border-color: rgba(251, 84, 43, 0.4);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.7), 0 0 20px -2px rgba(251, 84, 43, 0.2);
+}
+
+/* Brave Pill Button */
+.brave-btn-primary {
+  @apply inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 shadow-md;
+  background: linear-gradient(135deg, #FB542B 0%, #E0350B 100%);
+  color: white;
+}
+.brave-btn-primary:hover {
+  background: linear-gradient(135deg, #FF663E 0%, #FB542B 100%);
+  box-shadow: 0 0 20px rgba(251, 84, 43, 0.4);
+}
+
+.brave-btn-secondary {
+  @apply inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 border;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+}
+.brave-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 /* Custom scrollbar */
@@ -28,12 +82,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(148, 163, 184, 0.3);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(148, 163, 184, 0.5);
 }

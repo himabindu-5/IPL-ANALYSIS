@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Search, X, Zap, Target } from 'lucide-react';
+import { Users, Search, X, Zap, Target, Flame, Clock } from 'lucide-react';
 import { fetchPlayers, fetchPlayerProfile, fetchSeasons } from '../services/api';
 import type { PlayersListResponse, PlayerProfile, SeasonInfo } from '../types';
 import { Pagination } from '../components/Pagination';
@@ -20,6 +20,17 @@ export const PlayersPage: React.FC = () => {
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
+  const QUICK_SUGGESTIONS = [
+    { label: 'Virat Kohli', query: 'Virat Kohli' },
+    { label: 'Rohit Sharma', query: 'Rohit Sharma' },
+    { label: 'MS Dhoni', query: 'MS Dhoni' },
+    { label: 'Jasprit Bumrah', query: 'Jasprit Bumrah' },
+    { label: 'Hardik Pandya', query: 'Hardik Pandya' },
+    { label: 'Suryakumar Yadav', query: 'SKY' },
+    { label: 'Rashid Khan', query: 'Rashid Khan' },
+    { label: 'Andre Russell', query: 'Russell' }
+  ];
+
   const loadSeasons = async () => {
     try {
       const res = await fetchSeasons();
@@ -29,10 +40,11 @@ export const PlayersPage: React.FC = () => {
     }
   };
 
-  const loadPlayers = async () => {
+  const loadPlayers = async (overrideSearch?: string) => {
     setLoading(true);
     try {
-      const res = await fetchPlayers(search, selectedSeason, selectedRole, page, 24);
+      const q = overrideSearch !== undefined ? overrideSearch : search;
+      const res = await fetchPlayers(q, selectedSeason, selectedRole, page, 24);
       setPlayersRes(res);
     } catch (err) {
       console.error(err);
@@ -55,6 +67,12 @@ export const PlayersPage: React.FC = () => {
     loadPlayers();
   };
 
+  const handleQuickSearch = (query: string) => {
+    setSearch(query);
+    setPage(1);
+    loadPlayers(query);
+  };
+
   const openPlayerProfile = async (playerId: string) => {
     setSelectedPlayerId(playerId);
     setProfileLoading(true);
@@ -73,67 +91,98 @@ export const PlayersPage: React.FC = () => {
     setSelectedSeason('All');
     setSelectedRole('All');
     setPage(1);
+    loadPlayers('');
   };
 
   return (
     <div className="space-y-6">
       
       {/* Header & Search Toolbar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-600" />
-            IPL Player Directory & Master Profiles
-          </h1>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Search 809 verified player profiles with career & season-by-season analytics
-          </p>
-        </div>
-
-        {/* Filter Controls */}
-        <form onSubmit={handleSearchSubmit} className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              placeholder="Search player name or ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+      <div className="clean-card p-5 sm:p-6 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#FB542B]" />
+                IPL Player Directory & Forte Intelligence
+              </h1>
+              <span className="text-[10px] bg-[#FB542B]/10 text-[#FB542B] font-bold px-2 py-0.5 rounded-full border border-[#FB542B]/30">
+                809 Verified Masters
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+              Search any player by full name, initial, or nickname with empirical delivery phase stats and forte tags
+            </p>
           </div>
 
-          <select
-            value={selectedRole}
-            onChange={(e) => { setSelectedRole(e.target.value); setPage(1); }}
-            className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
-          >
-            <option value="All">All Roles</option>
-            <option value="batter">Batters</option>
-            <option value="bowler">Bowlers</option>
-          </select>
+          {/* Filter Controls */}
+          <form onSubmit={handleSearchSubmit} className="flex flex-wrap items-center gap-3">
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search 'Virat', 'Rohit', 'Bumrah'..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FB542B]"
+              />
+            </div>
 
-          <select
-            value={selectedSeason}
-            onChange={(e) => { setSelectedSeason(e.target.value); setPage(1); }}
-            className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
-          >
-            <option value="All">All Seasons</option>
-            {seasons.map((s) => (
-              <option key={s.season} value={s.season}>{s.season}</option>
-            ))}
-          </select>
-
-          {(search || selectedSeason !== 'All' || selectedRole !== 'All') && (
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-colors"
+            <select
+              value={selectedRole}
+              onChange={(e) => { setSelectedRole(e.target.value); setPage(1); }}
+              className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-hidden cursor-pointer"
             >
-              Reset
+              <option value="All" className="dark:bg-[#121624]">All Roles</option>
+              <option value="batter" className="dark:bg-[#121624]">Batters</option>
+              <option value="bowler" className="dark:bg-[#121624]">Bowlers</option>
+            </select>
+
+            <select
+              value={selectedSeason}
+              onChange={(e) => { setSelectedSeason(e.target.value); setPage(1); }}
+              className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-hidden cursor-pointer"
+            >
+              <option value="All" className="dark:bg-[#121624]">All Seasons</option>
+              {seasons.map((s) => (
+                <option key={s.season} value={s.season} className="dark:bg-[#121624]">{s.season}</option>
+              ))}
+            </select>
+
+            <button
+              type="submit"
+              className="brave-btn-primary px-4 py-1.5 text-xs font-bold"
+            >
+              Search
             </button>
-          )}
-        </form>
+
+            {(search || selectedSeason !== 'All' || selectedRole !== 'All') && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs font-semibold text-[#FB542B] bg-[#FB542B]/10 hover:bg-[#FB542B]/20 px-3 py-1.5 rounded-xl border border-[#FB542B]/30 transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </form>
+        </div>
+
+        {/* Quick Search Chips */}
+        <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar pt-2 border-t border-slate-100 dark:border-slate-800">
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+            Popular:
+          </span>
+          {QUICK_SUGGESTIONS.map((chip) => (
+            <button
+              key={chip.label}
+              onClick={() => handleQuickSearch(chip.query)}
+              className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-[#FB542B]/10 hover:text-[#FB542B] dark:hover:text-[#FB542B] hover:border-[#FB542B]/40 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-all"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Players Cards Grid */}
@@ -148,30 +197,32 @@ export const PlayersPage: React.FC = () => {
               <div
                 key={p.player_id}
                 onClick={() => openPlayerProfile(p.player_id)}
-                className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-300 shadow-xs hover:shadow-md cursor-pointer transition-all group"
+                className="clean-card p-5 cursor-pointer group hover:border-[#FB542B]/40 transition-all"
               >
                 <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-extrabold group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    {p.display_name.charAt(0)}
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FB542B] to-[#434FCF] p-[2px]">
+                    <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-white font-black text-sm">
+                      {p.display_name.charAt(0)}
+                    </div>
                   </div>
-                  <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
                     {p.matches_seen} Matches
                   </span>
                 </div>
 
-                <h3 className="mt-3 text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                <h3 className="mt-3 text-base font-bold text-slate-900 dark:text-white group-hover:text-[#FB542B] transition-colors line-clamp-1">
                   {p.display_name}
                 </h3>
-                <p className="text-[11px] font-mono text-slate-400">ID: {p.player_id}</p>
+                <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500">ID: {p.player_id}</p>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-semibold block uppercase">Total Runs</span>
-                    <span className="font-extrabold text-slate-800">{p.total_runs ? p.total_runs.toLocaleString() : '0'}</span>
+                    <span className="text-[10px] text-slate-400 font-semibold block uppercase">Career Runs</span>
+                    <span className="font-extrabold text-slate-800 dark:text-slate-200">{p.total_runs ? p.total_runs.toLocaleString() : '0'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-400 font-semibold block uppercase">Total Wickets</span>
-                    <span className="font-extrabold text-slate-800">{p.total_wickets ? p.total_wickets.toLocaleString() : '0'}</span>
+                    <span className="text-[10px] text-slate-400 font-semibold block uppercase">Career Wickets</span>
+                    <span className="font-extrabold text-slate-800 dark:text-slate-200">{p.total_wickets ? p.total_wickets.toLocaleString() : '0'}</span>
                   </div>
                 </div>
               </div>
@@ -193,18 +244,28 @@ export const PlayersPage: React.FC = () => {
 
       {/* Player Profile Modal */}
       {selectedPlayerId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-4xl w-full border border-slate-200 shadow-2xl overflow-hidden my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto">
+          <div className="clean-card bg-white dark:bg-[#0d111c] max-w-4xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden my-8">
             
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 flex items-start justify-between relative">
+            <div className="bg-gradient-to-r from-slate-900 via-[#101428] to-[#0A0D18] text-white p-6 flex items-start justify-between relative border-b border-slate-800">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-black shadow-lg">
-                  {profile?.player.display_name.charAt(0) || 'P'}
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#FB542B] to-[#434FCF] p-0.5 shadow-lg">
+                  <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-white text-2xl font-black">
+                    {profile?.player.display_name.charAt(0) || 'P'}
+                  </div>
                 </div>
                 <div>
                   <h2 className="text-2xl font-black tracking-tight">{profile?.player.display_name}</h2>
-                  <p className="text-xs text-indigo-200 font-mono mt-0.5">Player ID: {profile?.player.player_id}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <span className="text-xs text-slate-400 font-mono">ID: {profile?.player.player_id}</span>
+                    {profile?.forte && (
+                      <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-[#FB542B] border border-orange-500/30 text-[11px] font-bold">
+                        <Flame className="w-3 h-3" />
+                        <span>Forte: {profile.forte}</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -221,73 +282,120 @@ export const PlayersPage: React.FC = () => {
             ) : (
               <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
                 
+                {/* Empirical Phase Analysis Highlight */}
+                {profile.phase_analysis && (
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-500/10 via-indigo-500/10 to-blue-500/10 border border-orange-500/20">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
+                        <Clock className="w-4 h-4 text-[#FB542B]" />
+                        <span>Empirical Ball-by-Ball Phase Metrics</span>
+                      </h4>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Real Delivery Log Analysis</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span className="text-[10px] text-slate-400 block font-semibold uppercase">Powerplay Runs (1-6)</span>
+                        <span className="text-base font-extrabold text-slate-900 dark:text-white">
+                          {profile.phase_analysis.powerplay_runs.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">SR: {profile.phase_analysis.powerplay_sr}</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span className="text-[10px] text-slate-400 block font-semibold uppercase">Death Overs Runs (16-20)</span>
+                        <span className="text-base font-extrabold text-[#FB542B]">
+                          {profile.phase_analysis.death_runs.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">SR: {profile.phase_analysis.death_sr}</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span className="text-[10px] text-slate-400 block font-semibold uppercase">Death Wickets (16-20)</span>
+                        <span className="text-base font-extrabold text-slate-900 dark:text-white">
+                          {profile.phase_analysis.death_wickets}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">Clutch overs</span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+                        <span className="text-[10px] text-slate-400 block font-semibold uppercase">Death Overs Economy</span>
+                        <span className="text-base font-extrabold text-indigo-500">
+                          {profile.phase_analysis.death_economy > 0 ? profile.phase_analysis.death_economy : '—'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">Runs/over (16-20)</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Career Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   
                   {/* Batting Career Summary */}
-                  <div className="bg-indigo-50/60 p-5 rounded-2xl border border-indigo-100">
-                    <div className="flex items-center space-x-2 text-indigo-700 font-bold text-sm mb-3">
+                  <div className="clean-card p-5 border border-indigo-500/20 bg-indigo-50/20 dark:bg-indigo-950/20">
+                    <div className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-bold text-sm mb-3">
                       <Zap className="w-4 h-4" />
                       <span>Batting Career Aggregate</span>
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-xs">
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Runs</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_batting.runs.toLocaleString()}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_batting.runs.toLocaleString()}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Average</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_batting.career_average}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_batting.career_average}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Strike Rate</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_batting.career_strike_rate}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_batting.career_strike_rate}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Fifties</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_batting.fifties}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_batting.fifties}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Hundreds</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_batting.hundreds}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_batting.hundreds}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">4s / 6s</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_batting.fours} / {profile.career_batting.sixes}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_batting.fours} / {profile.career_batting.sixes}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Bowling Career Summary */}
-                  <div className="bg-emerald-50/60 p-5 rounded-2xl border border-emerald-100">
-                    <div className="flex items-center space-x-2 text-emerald-700 font-bold text-sm mb-3">
+                  <div className="clean-card p-5 border border-emerald-500/20 bg-emerald-50/20 dark:bg-emerald-950/20">
+                    <div className="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm mb-3">
                       <Target className="w-4 h-4" />
                       <span>Bowling Career Aggregate</span>
                     </div>
                     <div className="grid grid-cols-3 gap-3 text-xs">
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Wickets</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_bowling.wickets}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_bowling.wickets}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Economy</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_bowling.career_economy}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_bowling.career_economy}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Average</span>
-                        <div className="text-lg font-black text-slate-900">{profile.career_bowling.career_average}</div>
+                        <div className="text-lg font-black text-slate-900 dark:text-white">{profile.career_bowling.career_average}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Overs</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_bowling.total_overs}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_bowling.total_overs}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Strike Rate</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_bowling.career_strike_rate}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_bowling.career_strike_rate}</div>
                       </div>
                       <div>
                         <span className="text-[10px] font-semibold text-slate-500 uppercase">Runs Conceded</span>
-                        <div className="text-base font-bold text-slate-800">{profile.career_bowling.runs_conceded.toLocaleString()}</div>
+                        <div className="text-base font-bold text-slate-800 dark:text-slate-200">{profile.career_bowling.runs_conceded.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
@@ -297,9 +405,9 @@ export const PlayersPage: React.FC = () => {
                 {profile.batting_seasons.length > 0 && (
                   <div>
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Season-wise Batting Breakdown</h4>
-                    <div className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
+                    <div className="clean-card overflow-hidden">
                       <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-100 text-slate-500 font-bold border-b border-slate-200">
+                        <thead className="bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                           <tr>
                             <th className="p-3">Season</th>
                             <th className="p-3 text-right">Matches</th>
@@ -310,16 +418,16 @@ export const PlayersPage: React.FC = () => {
                             <th className="p-3 text-right">50s / 100s</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 font-medium">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
                           {profile.batting_seasons.map((b, idx) => (
-                            <tr key={idx}>
-                              <td className="p-3 font-bold text-slate-900">{b.season}</td>
-                              <td className="p-3 text-right text-slate-600">{b.matches}</td>
-                              <td className="p-3 text-right text-slate-600">{b.innings}</td>
-                              <td className="p-3 text-right font-extrabold text-indigo-600">{b.runs}</td>
-                              <td className="p-3 text-right text-slate-700">{b.batting_average ?? '—'}</td>
-                              <td className="p-3 text-right text-slate-700">{b.strike_rate ?? '—'}</td>
-                              <td className="p-3 text-right text-slate-800">{b.fifties} / {b.hundreds}</td>
+                            <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                              <td className="p-3 font-bold text-slate-900 dark:text-white">{b.season}</td>
+                              <td className="p-3 text-right text-slate-600 dark:text-slate-400">{b.matches}</td>
+                              <td className="p-3 text-right text-slate-600 dark:text-slate-400">{b.innings}</td>
+                              <td className="p-3 text-right font-extrabold text-[#FB542B]">{b.runs}</td>
+                              <td className="p-3 text-right text-slate-700 dark:text-slate-300">{b.batting_average ?? '—'}</td>
+                              <td className="p-3 text-right text-slate-700 dark:text-slate-300">{b.strike_rate ?? '—'}</td>
+                              <td className="p-3 text-right text-slate-800 dark:text-slate-200">{b.fifties} / {b.hundreds}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -330,11 +438,11 @@ export const PlayersPage: React.FC = () => {
 
                 {/* Registered Match Aliases */}
                 {profile.aliases.length > 0 && (
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Verified Match Identity Aliases</span>
+                  <div className="clean-card p-4">
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Verified Match Identity Aliases</span>
                     <div className="flex flex-wrap gap-1.5">
                       {profile.aliases.map((alias, idx) => (
-                        <span key={idx} className="bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700">
+                        <span key={idx} className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300">
                           {alias}
                         </span>
                       ))}

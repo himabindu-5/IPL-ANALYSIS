@@ -5,11 +5,12 @@ from typing import Optional, List
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from backend.db import execute_query, db_manager
+from backend.auction import get_franchise_auction_profile, list_all_franchises, compute_player_empirical_forte
 
 app = FastAPI(
     title="IPL Analysis API",
     description="Backend API for complete IPL Dataset & PostgreSQL / SQLite Analytics",
-    version="1.1.0"
+    version="1.2.0"
 )
 
 # Enable CORS for local dev server
@@ -22,6 +23,98 @@ app.add_middleware(
 )
 
 ROOT = Path(__file__).resolve().parent.parent
+
+COMMON_FIRST_NAME_MAP = {
+    "virat": "%Kohli%",
+    "rohit": "%RG Sharma%",
+    "hardik": "%Pandya%",
+    "jasprit": "%Bumrah%",
+    "bumrah": "%Bumrah%",
+    "sachin": "%Tendulkar%",
+    "suresh": "%Raina%",
+    "gautam": "%Gambhir%",
+    "virender": "%Sehwag%",
+    "yuvraj": "%Yuvraj%",
+    "ravindra": "%Jadeja%",
+    "shikhar": "%Dhawan%",
+    "ashish": "%Nehra%",
+    "zaheer": "%Z Khan%",
+    "sourav": "%Ganguly%",
+    "rahul": "%Rahul%",
+    "anil": "%Kumble%",
+    "harbhajan": "%Harbhajan%",
+    "rishabh": "%Pant%",
+    "pant": "%RR Pant%",
+    "shreyas": "%SS Iyer%",
+    "sanju": "%Samson%",
+    "suryakumar": "%SA Yadav%",
+    "sky": "%SA Yadav%",
+    "dhoni": "%MS Dhoni%",
+    "ms dhoni": "%MS Dhoni%",
+    "kl": "%KL Rahul%",
+    "kl rahul": "%KL Rahul%",
+    "faf": "%du Plessis%",
+    "glenn": "%Maxwell%",
+    "maxwell": "%GJ Maxwell%",
+    "andre": "%Russell%",
+    "russell": "%AD Russell%",
+    "sunil": "%Narine%",
+    "narine": "%SP Narine%",
+    "rashid": "%Rashid Khan%",
+    "pat": "%Cummins%",
+    "cummins": "%PJ Cummins%",
+    "starc": "%MA Starc%",
+    "travis": "%Head%",
+    "head": "%TM Head%",
+    "klaasen": "%H Klaasen%",
+    "chahal": "%YS Chahal%",
+    "kuldeep": "%Kuldeep Yadav%",
+    "arshdeep": "%Arshdeep Singh%",
+    "gill": "%Gill%",
+    "shubman": "%Gill%",
+    "ruturaj": "%Gaikwad%",
+    "rinku": "%RK Singh%",
+    "siraj": "%Siraj%",
+    "shami": "%Mohammed Shami%",
+    "boult": "%TA Boult%",
+    "pollard": "%KA Pollard%",
+    "bravo": "%DJ Bravo%",
+    "malinga": "%SL Malinga%",
+    "warner": "%DA Warner%",
+    "buttler": "%JC Buttler%",
+    "gayle": "%CH Gayle%",
+    "abd": "%AB de Villiers%",
+}
+
+def build_player_search_clauses(search: str, col_prefix: str = "p."):
+    """Generates SQL where fragments and parameters for smart player name matching."""
+    s_clean = search.strip()
+    words = s_clean.split()
+    clauses = []
+    params = []
+
+    # Direct contains match on display_name or player_id
+    clauses.append(f"({col_prefix}display_name LIKE %s OR {col_prefix}player_id LIKE %s)")
+    params.extend([f"%{s_clean}%", f"%{s_clean}%"])
+
+    # Check known aliases/nicknames
+    low = s_clean.lower()
+    if low in COMMON_FIRST_NAME_MAP:
+        clauses.append(f"{col_prefix}display_name LIKE %s")
+        params.append(COMMON_FIRST_NAME_MAP[low])
+
+    # Multi-word name handling: e.g. "Virat Kohli" -> initial 'V' + last name 'Kohli'
+    if len(words) >= 2:
+        initial = words[0][0]
+        last_word = words[-1]
+        pattern = f"{initial}%{last_word}%"
+        clauses.append(f"{col_prefix}display_name LIKE %s")
+        params.append(pattern)
+        clauses.append(f"{col_prefix}display_name LIKE %s")
+        params.append(f"%{last_word}%")
+
+    sql_str = " (" + " OR ".join(clauses) + ") "
+    return sql_str, params
 
 def sanitize_record(record: dict) -> dict:
     sanitized = {}
@@ -126,6 +219,69 @@ def get_dashboard(season: Optional[str] = None, team: Optional[str] = None):
         ORDER BY m.season ASC
     """)
 
+    # Pie Chart 1: Toss Decisions (Bat vs Field)
+    toss_query = f"""
+        SELECT toss_decision as name, COUNT(*) as value
+        FROM matches
+        {where_clause}
+        GROUP BY toss_decision
+    """
+    toss_rows = execute_query(toss_query, tuple(match_params))
+    toss_decision_pie = [
+        {"name": "Field First" if r["name"] == "field" else "Bat First", "value": r["value"]}
+        for r in toss_rows if r.get("name")
+    ]
+
+    # Pie Chart 2: Match Outcomes (Chasing vs Defending vs Tie / No Result)
+    outcome_query = f"""
+        SELECT 
+            CASE 
+                WHEN m.winner = inn1.batting_team THEN 'Defending (Bat First)'
+                WHEN m.winner = inn2.batting_team THEN 'Chasing (Field First)'
+                WHEN m.result = 'tie' THEN 'Super Over / Tie'
+                ELSE 'No Result'
+            END as name,
+            COUNT(*) as value
+        FROM matches m
+        LEFT JOIN (SELECT DISTINCT match_id, batting_team FROM deliveries WHERE innings_no = 1) inn1 ON m.match_id = inn1.match_id
+        LEFT JOIN (SELECT DISTINCT match_id, batting_team FROM deliveries WHERE innings_no = 2) inn2 ON m.match_id = inn2.match_id
+        {where_clause}
+        GROUP BY name
+    """
+    outcome_rows = execute_query(outcome_query, tuple(match_params))
+    match_outcome_pie = [sanitize_record(r) for r in outcome_rows if r.get("value", 0) > 0]
+
+    # Pie Chart 3: Boundary & Scoring Breakdown
+    if season and season != "All":
+        b_query = """
+            SELECT 
+                SUM(CASE WHEN d.batter_runs = 4 THEN 4 ELSE 0 END) as fours_runs,
+                SUM(CASE WHEN d.batter_runs = 6 THEN 6 ELSE 0 END) as sixes_runs,
+                SUM(CASE WHEN d.batter_runs IN (1,2,3) THEN d.batter_runs ELSE 0 END) as singles_runs,
+                SUM(d.extra_runs) as extra_runs
+            FROM deliveries d
+            JOIN matches m ON d.match_id = m.match_id
+            WHERE m.season = %s
+        """
+        b_res = execute_query(b_query, (season,), fetchall=False)
+    else:
+        b_query = """
+            SELECT 
+                SUM(CASE WHEN batter_runs = 4 THEN 4 ELSE 0 END) as fours_runs,
+                SUM(CASE WHEN batter_runs = 6 THEN 6 ELSE 0 END) as sixes_runs,
+                SUM(CASE WHEN batter_runs IN (1,2,3) THEN batter_runs ELSE 0 END) as singles_runs,
+                SUM(extra_runs) as extra_runs
+            FROM deliveries
+        """
+        b_res = execute_query(b_query, fetchall=False)
+
+    boundary_share_pie = [
+        {"name": "Fours (4s)", "value": b_res["fours_runs"] if b_res else 0, "color": "#FB542B"},
+        {"name": "Sixes (6s)", "value": b_res["sixes_runs"] if b_res else 0, "color": "#434FCF"},
+        {"name": "Running (1s, 2s, 3s)", "value": b_res["singles_runs"] if b_res else 0, "color": "#10B981"},
+        {"name": "Extras (Wides/NB)", "value": b_res["extra_runs"] if b_res else 0, "color": "#F59E0B"}
+    ]
+
     return {
         "summary": {
             "total_matches": total_matches,
@@ -138,7 +294,10 @@ def get_dashboard(season: Optional[str] = None, team: Optional[str] = None):
         "charts": {
             "season_matches": season_chart,
             "team_wins": team_wins,
-            "season_trends": season_trends
+            "season_trends": season_trends,
+            "toss_decision_pie": toss_decision_pie,
+            "match_outcome_pie": match_outcome_pie,
+            "boundary_share_pie": boundary_share_pie
         }
     }
 
@@ -279,9 +438,9 @@ def list_players(
     params = []
 
     if search:
-        where_parts.append("(p.display_name LIKE %s OR p.player_id LIKE %s OR p.registry_names LIKE %s)")
-        s_pat = f"%{search}%"
-        params.extend([s_pat, s_pat, s_pat])
+        s_clause, s_params = build_player_search_clauses(search, "p.")
+        where_parts.append(s_clause)
+        params.extend(s_params)
 
     if role == "batter":
         where_parts.append("p.player_id IN (SELECT DISTINCT player_id FROM batting_stats)")
@@ -390,8 +549,13 @@ def get_player_profile(player_id: str):
         SELECT DISTINCT player_name FROM player_match_aliases WHERE player_id = %s ORDER BY player_name ASC
     """, (player_id,))
 
+    # Empirical Forte and Phase Analysis
+    forte_stat = compute_player_empirical_forte(player["display_name"])
+
     return {
         "player": sanitize_record(player),
+        "forte": forte_stat["forte"],
+        "phase_analysis": forte_stat["phase_analysis"],
         "career_batting": sanitize_record(c_bat),
         "career_bowling": sanitize_record(c_bowl),
         "batting_seasons": [sanitize_record(r) for r in batting_seasons],
@@ -501,9 +665,9 @@ def get_batting_analytics(
         params.append(season)
 
     if search:
-        where_parts.append("(b.display_name LIKE %s OR b.player_id LIKE %s)")
-        s_pat = f"%{search}%"
-        params.extend([s_pat, s_pat])
+        s_clause, s_params = build_player_search_clauses(search, "b.")
+        where_parts.append(s_clause)
+        params.extend(s_params)
 
     where_str = " WHERE " + " AND ".join(where_parts) if where_parts else ""
 
@@ -582,9 +746,9 @@ def get_bowling_analytics(
         params.append(season)
 
     if search:
-        where_parts.append("(b.display_name LIKE %s OR b.player_id LIKE %s)")
-        s_pat = f"%{search}%"
-        params.extend([s_pat, s_pat])
+        s_clause, s_params = build_player_search_clauses(search, "b.")
+        where_parts.append(s_clause)
+        params.extend(s_params)
 
     where_str = " WHERE " + " AND ".join(where_parts) if where_parts else ""
 
@@ -829,7 +993,18 @@ def get_quality_report():
     }
 
 # -------------------------------------------------------------
-# 10. FRONTEND STATIC FILES & SPA FALLBACK
+# 10. AUCTION INTELLIGENCE & WAR ROOM (EMPIRICAL VALUATION)
+# -------------------------------------------------------------
+@app.get("/api/auction/franchises")
+def get_auction_franchises():
+    return list_all_franchises()
+
+@app.get("/api/auction/teams/{team_name}")
+def get_auction_team(team_name: str):
+    return get_franchise_auction_profile(team_name)
+
+# -------------------------------------------------------------
+# 11. FRONTEND STATIC FILES & SPA FALLBACK
 # -------------------------------------------------------------
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse

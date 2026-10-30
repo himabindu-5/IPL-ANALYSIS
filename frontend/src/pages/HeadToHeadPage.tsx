@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Swords, Zap, Target } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, PieChart, Pie, Cell } from 'recharts';
 import { fetchHeadToHead, fetchTeams } from '../services/api';
 import type { HeadToHeadResponse } from '../types';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -200,39 +200,79 @@ export const HeadToHeadPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Season-by-Season Win Breakdown Chart */}
-          {data.season_breakdown.length > 0 && (
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-slate-900">Season-by-Season H2H Wins Breakdown</h3>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-700">
-                    <TeamLogo teamName={data.team1} size="sm" />
-                    <span>{data.team1}</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-700">
-                    <TeamLogo teamName={data.team2} size="sm" />
-                    <span>{data.team2}</span>
+          {/* Charts Row: Season Breakdown & Win Distribution Pie */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Season-by-Season Win Breakdown Chart */}
+            {data.season_breakdown.length > 0 && (
+              <div className="clean-card p-5 lg:col-span-2">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Season-by-Season H2H Wins Breakdown</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      <TeamLogo teamName={data.team1} size="sm" />
+                      <span>{data.team1}</span>
+                    </div>
+                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      <TeamLogo teamName={data.team2} size="sm" />
+                      <span>{data.team2}</span>
+                    </div>
                   </div>
                 </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.season_breakdown}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
+                      <XAxis dataKey="season" tick={{ fontSize: 10, fill: '#64748b' }} />
+                      <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: '12px' }} />
+                      <Bar dataKey="team1_wins" fill="#FB542B" radius={[4, 4, 0, 0]} name={`${data.team1} Wins`} />
+                      <Bar dataKey="team2_wins" fill="#434FCF" radius={[4, 4, 0, 0]} name={`${data.team2} Wins`} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-              <div className="h-64">
+            )}
+
+            {/* Win Share Donut Chart */}
+            <div className="clean-card p-5">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Overall Rivalry Win Share</h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-3">Dominance percentage across all matches</p>
+              <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.season_breakdown}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="season" tick={{ fontSize: 10, fill: '#64748b' }} />
-                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: data.team1, value: data.summary.team1_wins, color: '#FB542B' },
+                        { name: data.team2, value: data.summary.team2_wins, color: '#434FCF' },
+                        ...(data.summary.no_results > 0 ? [{ name: 'No Result / Tie', value: data.summary.no_results, color: '#64748B' }] : [])
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={75}
+                      paddingAngle={3}
+                    >
+                      <Cell fill="#FB542B" />
+                      <Cell fill="#434FCF" />
+                      {data.summary.no_results > 0 && <Cell fill="#64748B" />}
+                    </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                      formatter={(val: any) => [`${val} Wins`, 'Matches']}
+                      contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '11px' }}
                     />
-                    <Legend wrapperStyle={{ fontSize: '12px' }} />
-                    <Bar dataKey="team1_wins" fill="#4f46e5" radius={[4, 4, 0, 0]} name={`${data.team1} Wins`} />
-                    <Bar dataKey="team2_wins" fill="#10b981" radius={[4, 4, 0, 0]} name={`${data.team2} Wins`} />
-                  </BarChart>
+                    <Legend wrapperStyle={{ fontSize: '11px' }} />
+                  </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
-          )}
+
+          </div>
 
           {/* Encounters History Table with TeamLogos */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">

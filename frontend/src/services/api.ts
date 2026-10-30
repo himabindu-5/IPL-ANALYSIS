@@ -186,3 +186,15 @@ export async function fetchQualityReport(): Promise<QualityReportResponse> {
   if (!res.ok) throw new Error('Failed to fetch data quality report');
   return res.json();
 }
+
+export async function fetchAuctionFranchises(): Promise<import('../types').FranchiseMeta[]> {
+  const res = await apiFetch(`${API_BASE}/auction/franchises`);
+  if (!res.ok) throw new Error('Failed to fetch auction franchises');
+  return res.json();
+}
+
+export async function fetchAuctionTeam(teamName: string): Promise<import('../types').AuctionTeamProfileResponse> {
+  const res = await apiFetch(`${API_BASE}/auction/teams/${encodeURIComponent(teamName)}`);
+  if (!res.ok) throw new Error(`Failed to fetch auction profile for ${teamName}`);
+  return res.json();
+}
