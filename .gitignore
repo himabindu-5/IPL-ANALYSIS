@@ -6,7 +6,6 @@ __pycache__/
 node_modules/
 dist/
 scratch/
-database/ipl_analysis.db
 .firebase/
 active_url.txt
 public_url.txt

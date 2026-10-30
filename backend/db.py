@@ -32,23 +32,38 @@ class DatabaseManager:
                     password=pg_pass,
                     database=pg_db,
                 )
-                # Verify actual query execution
                 cursor = conn.cursor()
                 cursor.execute("SELECT 1")
                 cursor.fetchone()
+                # Verify that tables actually exist in PostgreSQL
+                cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'players'")
+                row = cursor.fetchone()
+                has_tables = row and row[0] > 0
                 cursor.close()
                 conn.close()
-                self.mode = "postgresql"
-                self.error = None
-                return
+                if has_tables:
+                    self.mode = "postgresql"
+                    self.error = None
+                    return
+                else:
+                    self.error = "PostgreSQL tables not initialized. Falling back to SQLite."
             except Exception as e:
                 self.error = f"PostgreSQL connection failed: {e}"
         else:
             self.error = "PostgreSQL password (PGPASSWORD) is not set in environment or .env."
 
         # Fallback to local SQLite DB
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if not DB_PATH.exists():
+            try:
+                from scripts.build_sqlite_db import build_sqlite
+                build_sqlite()
+            except Exception as e:
+                self.error = f"SQLite build failed: {e}"
+
         if DB_PATH.exists():
             self.mode = "sqlite"
+            self.error = None
         else:
             self.mode = "error"
 
@@ -68,6 +83,7 @@ class DatabaseManager:
                 pass
 
         # Fallback to local SQLite DB
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         if not DB_PATH.exists():
             from scripts.build_sqlite_db import build_sqlite
             build_sqlite()
@@ -108,5 +124,21 @@ def execute_query(query: str, params: tuple = (), fetchall: bool = True):
             else:
                 col_names = [desc[0] for desc in cursor.description]
                 return dict(zip(col_names, row))
+    except Exception as e:
+        # If postgres fails at runtime, fallback to sqlite immediately
+        if mode == "postgresql":
+            db_manager.mode = "sqlite"
+            conn.close()
+            conn, mode = db_manager.get_connection()
+            cursor = conn.cursor()
+            query = query.replace("%s", "?")
+            cursor.execute(query, params)
+            if fetchall:
+                rows = cursor.fetchall()
+                return [dict(row) for row in rows]
+            else:
+                row = cursor.fetchone()
+                return dict(row) if row else None
+        raise e
     finally:
         conn.close()

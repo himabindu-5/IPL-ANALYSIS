@@ -32,6 +32,7 @@ def as_float(val):
 
 def build_sqlite():
     print("Building local SQLite database from cleaned CSV files...")
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
