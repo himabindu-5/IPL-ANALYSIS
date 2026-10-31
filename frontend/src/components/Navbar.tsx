@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { 
-  Activity, Trophy, Users, Shield, Zap, Target, Search, CheckCircle2, Database, 
+  Activity, Trophy, Users, Shield, Zap, Target, Search, CheckCircle2, 
   Menu, X, Sun, Moon, Flame, Sparkles
 } from 'lucide-react';
-import type { StatusResponse } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  status: StatusResponse | null;
+  status?: any;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, status }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -104,13 +103,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, status 
               </button>
             </div>
 
-            {/* Database Connection Badge */}
-            <div className="hidden lg:flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800/60 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700/60 text-xs font-medium text-slate-600 dark:text-slate-300">
-              <Database className={`w-3.5 h-3.5 ${status?.database_mode === 'postgresql' ? 'text-emerald-500' : 'text-amber-500'}`} />
-              <span className="capitalize">{status?.database_mode || 'DB'}</span>
-              <span className={`w-2 h-2 rounded-full ${status?.status === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-            </div>
-
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -192,14 +184,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, status 
             })}
           </div>
 
-          <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between px-3 text-xs text-slate-500 dark:text-slate-400">
-            <div className="flex items-center space-x-2">
-              <Database className="w-3.5 h-3.5 text-[#FB542B]" />
-              <span>DB: <strong className="capitalize">{status?.database_mode || 'SQLite'}</strong></span>
-            </div>
-            <div className="text-[11px] font-medium text-emerald-500 flex items-center space-x-1">
+          <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-center px-3 text-xs text-slate-500 dark:text-slate-400">
+            <div className="text-[11px] font-medium text-emerald-500 flex items-center space-x-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
-              <span>100% Real Scraped Data</span>
+              <span>100% Real Scraped Data Engine</span>
             </div>
           </div>
         </div>

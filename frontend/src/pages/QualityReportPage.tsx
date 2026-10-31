@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Database } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 import { fetchQualityReport } from '../services/api';
 import type { QualityReportResponse } from '../types';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -100,25 +100,6 @@ export const QualityReportPage: React.FC = () => {
             </div>
           );
         })}
-      </div>
-
-      {/* Database Mode Card */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-2xl text-indigo-600">
-            <Database className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-slate-400 uppercase">Database Architecture Status</div>
-            <div className="text-base font-extrabold text-slate-900 capitalize mt-0.5">
-              Active Engine: {report.database_mode}
-            </div>
-          </div>
-        </div>
-
-        <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${report.database_mode === 'postgresql' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-          {report.database_mode === 'postgresql' ? 'PostgreSQL Verified' : 'Local SQLite Fallback'}
-        </span>
       </div>
 
     </div>
